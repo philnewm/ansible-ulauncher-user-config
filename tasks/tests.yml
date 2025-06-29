@@ -1,5 +1,19 @@
 ---
 
-# tests to verify role functionality
+- name: Load the JSON file into a variable
+  ansible.builtin.slurp:
+    src: "{{ ulauncher_settings_dir }}/settings.json"
+  register: settings_file_content
+
+- name: Parse the JSON file content
+  ansible.builtin.set_fact:
+    file_settings: "{{ settings_file_content.content | b64decode | from_json }}"
+
+- name: Verify that the JSON file content matches the settings variable
+  ansible.builtin.assert:
+    that:
+      - file_settings == ulauncher_settings
+    fail_msg: "The settings in the JSON file do not match the expected settings from ulauncher_settings."
+    quiet: true
 
 ...

@@ -1,11 +1,91 @@
 ---
 
-# Install tasks
-# INFO larger roles should only use **include_tasks** here
-
-
-# INFO This task may be obsolete for your use-case
 - name: Gather package facts
   ansible.builtin.package_facts:
+
+- name: Check for ulauncher
+  when: "'ulauncher' not in ansible_facts.packages"
+  ansible.builtin.debug:
+    msg: "Unable to find ulauncher in installed packages"
+
+- name: Ansible check directory
+  become: true
+  become_user: "{{ user }}"
+  ansible.builtin.stat:
+    path: "{{ (ansible_env.HOME, '.config', 'ulauncher') | ansible.builtin.path_join }}"
+  register: settings_dir
+
+- name: "Create settings directory for {{ user }}"
+  become: true
+  become_user: "{{ user }}"
+  when: not settings_dir.stat.exists
+  ansible.builtin.file:
+    path: "{{ ulauncher_themes_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Get current display server from "{{ gdm_config_file[ansible_distribution] }}"
+  ansible.builtin.shell:
+    cmd: "grep '^WaylandEnable=true' /etc/gdm/custom.conf || true"
+  register: wayland_check
+  changed_when: false
+
+# TODO test if checking for gnome presence first makes sense here
+- name: Disable Alt+Space for "Activate the Window menu"
+  become: true
+  become_user: "{{ user }}"
+  community.general.dconf:
+    key: "/org/gnome/desktop/wm/keybindings/activate-window-menu"
+    value: "{{ '@as []' | string }}"
+    state: present
+
+- name: "Wayland adjustments for {{ user }}"
+  become: true
+  become_user: "{{ user }}"
+  when: wayland_check.stdout
+  block:
+    - name: Update settings for wayland
+      ansible.builtin.set_fact:
+        ulauncher_settings: >-
+          {{
+            ulauncher_settings | combine({
+              "hotkey-show-app": "<Alt>minus"
+            })
+          }}
+
+- name: "Write app settings for {{ user }}"
+  become: true
+  become_user: "{{ user }}"
+  ansible.builtin.copy:
+    dest: "{{ (ulauncher_settings_dir, 'settings.json') | ansible.builtin.path_join }}"
+    content: "{{ ulauncher_settings | to_json(indent=4) }}"
+    mode: "0644"
+
+- name: "Write extension settings for {{ user }}"
+  become: true
+  become_user: "{{ user }}"
+  ansible.builtin.copy:
+    dest: "{{ (ulauncher_settings_dir, 'extensions.json') | ansible.builtin.path_join }}"
+    content: "{{ ulauncher_extensions | to_json(indent=4) }}"
+    mode: "0644"
+
+- name: "Write shortcut settings for {{ user }}"
+  become: true
+  become_user: "{{ user }}"
+  ansible.builtin.copy:
+    dest: "{{ (ulauncher_settings_dir, 'shortcuts.json') | ansible.builtin.path_join }}"
+    content: "{}"
+    mode: "0644"
+
+- name: Clone theme repos from github
+  become: true
+  become_user: "{{ user }}"
+  ansible.builtin.git:
+    repo: "{{ item.repo_url }}"
+    dest: "{{ item.download_dir }}"
+    single_branch: true
+    version: "{{ item.branch }}"
+    depth: 1
+  loop: "{{ ulauncher_github_repo_theme }}"
 
 ...

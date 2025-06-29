@@ -4,7 +4,7 @@
 
 Role description
 
-This role includes a vagrant based molecule testing setup as a submodule at `molecule/default`
+This role includes a vagrant based molecule testing setup as a submodule at `molecule/`
 
 ## Structure
 
@@ -12,31 +12,23 @@ This role includes a vagrant based molecule testing setup as a submodule at `mol
 📦 ansible-ulauncher-user-config
  ┣ 📂 defaults
  ┃ ┗ 📜 main.yml
- ┣ 📂 files
- ┃ ┗ 📜 file_placeholder.yml
- ┣ 📂 handlers
- ┃ ┗ 📜 main.yml
  ┣ 📂 meta
  ┃ ┗ 📜 main.yml
  ┣ 📂 molecule
  ┃ ┗ 📂 default
  ┃   ┗ 📜, 📜, 📜, scenario_files
  ┣ 📂 tasks
+ ┃ ┣ 📜 absent.yml
  ┃ ┣ 📜 main.yml
  ┃ ┣ 📜 present.yml
- ┃ ┣ 📜 dependencies.yml
- ┃ ┣ 📜 absent.yml
- ┃ ┗ 📜 init.yml
- ┣ 📂 templates
- ┃ ┗ ⛩️ template.j2
+ ┃ ┗ 📜 tests.yml
  ┣ 📂 vars
  ┃ ┗ 📜 main.yml
  ┗ 🗒️ README.md
- ┗ 📓 requirements.txt
 
 ```
 
-Describe and explain role structure. 
+Describe and explain role structure.
 
 ## Requirements
 
