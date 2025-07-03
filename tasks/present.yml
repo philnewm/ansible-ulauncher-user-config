@@ -12,7 +12,7 @@
   become: true
   become_user: "{{ user }}"
   ansible.builtin.stat:
-    path: "{{ (ansible_env.HOME, '.config', 'ulauncher') | ansible.builtin.path_join }}"
+    path: "{{ ulauncher_settings_dir }}"
   register: settings_dir
 
 - name: "Create settings directory for {{ user }}"
