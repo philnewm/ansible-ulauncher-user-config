@@ -42,7 +42,6 @@
   register: wayland_check
   changed_when: false
 
-# TODO test if checking for gnome presence first makes sense here
 - name: Disable Alt+Space for 'Activate the Window menu'
   become: true
   become_user: "{{ user }}"
