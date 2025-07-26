@@ -1,6 +1,25 @@
 ---
 
+# INFO enabled only requires symlink check while "started" requires D-Bus access which isn't available in terminal session
+- name: Check for enabled ulauncher service
+  become: true
+  become_user: "{{ user }}"
+  ansible.builtin.command:
+    cmd: systemctl --user is-enabled ulauncher.service
+  register: ulauncher_enabled_status
+  changed_when: false
+  failed_when: false
+
+- name: Test running ulauncher service
+  ansible.builtin.assert:
+    that:
+      - ulauncher_enabled_status.stdout == "enabled"
+    fail_msg: "ulauncher.service is not enabled (status: {{ ulauncher_enabled_status.stdout }})"
+    quiet: true
+
 - name: Load the JSON file into a variable
+  become: true
+  become_user: "{{ user }}"
   ansible.builtin.slurp:
     src: "{{ ulauncher_settings_dir }}/settings.json"
   register: settings_file_content

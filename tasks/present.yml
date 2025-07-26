@@ -8,6 +8,18 @@
   ansible.builtin.debug:
     msg: "Unable to find ulauncher in installed packages"
 
+- name: Ensure ulauncher service is enabled
+  ansible.builtin.systemd_service:
+    name: ulauncher.service
+    enabled: true
+    scope: "user"
+
+- name: Install git dependency
+  become: true
+  ansible.builtin.package:
+    name: git
+    state: present
+
 - name: Ansible check directory
   become: true
   become_user: "{{ user }}"
@@ -34,6 +46,7 @@
 - name: Disable Alt+Space for 'Activate the Window menu'
   become: true
   become_user: "{{ user }}"
+  when: "'gnome-shell' in ansible_facts.packages"
   community.general.dconf:
     key: "/org/gnome/desktop/wm/keybindings/activate-window-menu"
     value: "{{ '@as []' | string }}"
