@@ -37,10 +37,11 @@
     mode: "0755"
 
 - name: "Get current display server for {{ user }}"
-  ansible.builtin.shell:
-    cmd: "grep '^WaylandEnable=true' /etc/gdm/custom.conf || true"
+  ansible.builtin.command:
+    cmd: "grep '^WaylandEnable=true' /etc/gdm/custom.conf"
   register: wayland_check
   changed_when: false
+  failed_when: false
 
 - name: Disable Alt+Space for 'Activate the Window menu'
   become: true
@@ -54,7 +55,7 @@
 - name: "Wayland adjustments for {{ user }}"
   become: true
   become_user: "{{ user }}"
-  when: wayland_check.stdout
+  when: wayland_check.rc == 0
   block:
     - name: Update settings for wayland
       ansible.builtin.set_fact:
