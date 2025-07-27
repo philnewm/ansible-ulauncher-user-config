@@ -16,12 +16,6 @@
     enabled: true
     scope: "user"
 
-- name: Install git dependency
-  become: true
-  ansible.builtin.package:
-    name: git
-    state: present
-
 - name: Ansible check directory
   become: true
   become_user: "{{ user }}"
@@ -58,15 +52,13 @@
   become: true
   become_user: "{{ user }}"
   when: wayland_check.rc == 0
-  block:
-    - name: Update settings for wayland
-      ansible.builtin.set_fact:
-        ulauncher_settings: >-
-          {{
-            ulauncher_settings | combine({
-              "hotkey-show-app": "<Alt>minus"
-            })
-          }}
+  ansible.builtin.set_fact:
+    ulauncher_settings: >-
+      {{
+        ulauncher_settings | combine({
+          "hotkey-show-app": "<Alt>minus"
+        })
+      }}
 
 - name: "Write app settings for {{ user }}"
   become: true
@@ -92,15 +84,12 @@
     content: "{}"
     mode: "0644"
 
-- name: Clone theme repos from github
-  become: true
-  become_user: "{{ user }}"
-  ansible.builtin.git:
-    repo: "{{ item.repo_url }}"
-    dest: "{{ item.download_dir }}"
-    single_branch: true
-    version: "{{ item.branch }}"
-    depth: 1
+- name: Set up themes
   loop: "{{ ulauncher_github_repo_theme }}"
+  loop_control:
+    loop_var: ulauncher_theme
+    label: "{{ ulauncher_theme.name }}"
+  ansible.builtin.include_tasks:
+    file: themes.yml
 
 ...

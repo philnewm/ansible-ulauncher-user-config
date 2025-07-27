@@ -1,0 +1,41 @@
+---
+
+- name: Ensure theme dir exists
+  become: true
+  become_user: "{{ user }}"
+  ansible.builtin.file:
+    path: "{{ ulauncher_theme.target_dir }}"
+    state: "directory"
+    mode: "0755"
+
+- name: Ensure temp theme dir exists
+  become: true
+  become_user: "{{ user }}"
+  ansible.builtin.file:
+    path: "/tmp/ulauncher_theme_extract"
+    state: directory
+    mode: "0755"
+
+# INFO workaround to prevent another sub-dir with the archives name
+- name: "Download theme {{ ulauncher_theme.name }}"
+  become: true
+  become_user: "{{ user }}"
+  ansible.builtin.unarchive:
+    src: "{{ ulauncher_theme.repo_url }}"
+    dest: "/tmp/ulauncher_theme_extract"
+    remote_src: true
+  args:
+    creates: "{{ ulauncher_theme.target_dir }}/theme.css"
+
+- name: Move theme files to target location
+  become: true
+  become_user: "{{ user }}"
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      mv /tmp/ulauncher_theme_extract/{{ ulauncher_theme.repo_name }}-{{ ulauncher_theme.branch }}/* {{ ulauncher_theme.target_dir }}/
+  args:
+    creates: "{{ ulauncher_theme.target_dir }}/theme.css"
+    executable: /bin/bash
+
+...

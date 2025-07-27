@@ -37,10 +37,9 @@ ulauncher_extensions:
 
 ulauncher_github_repo_theme:
   - name: "ulauncher omni theme"
-    repo_url: "https://github.com/philnewm/ulauncher_theme.git"
+    repo_name: "ulauncher_theme"
     branch: "main"
-    install_cmd: ""
-    download_dir: "{{ (ulauncher_themes_dir, 'omni') | ansible.builtin.path_join }}"
-    install_dir: ""
+    repo_url: "https://github.com/philnewm/ulauncher_theme/archive/refs/heads/main.zip"
+    target_dir: "{{ ulauncher_themes_dir }}/omni"
 
 ...
