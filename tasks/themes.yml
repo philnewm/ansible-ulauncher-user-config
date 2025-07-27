@@ -12,7 +12,7 @@
   become: true
   become_user: "{{ user }}"
   ansible.builtin.file:
-    path: "/tmp/ulauncher_theme_extract"
+    path: "/tmp/ulauncher_theme_extract_{{ user }}"
     state: directory
     mode: "0755"
 
@@ -22,7 +22,7 @@
   become_user: "{{ user }}"
   ansible.builtin.unarchive:
     src: "{{ ulauncher_theme.repo_url }}"
-    dest: "/tmp/ulauncher_theme_extract"
+    dest: "/tmp/ulauncher_theme_extract_{{ user }}"
     remote_src: true
   args:
     creates: "{{ ulauncher_theme.target_dir }}/theme.css"
@@ -33,7 +33,7 @@
   ansible.builtin.shell:
     cmd: |
       set -o pipefail
-      mv /tmp/ulauncher_theme_extract/{{ ulauncher_theme.repo_name }}-{{ ulauncher_theme.branch }}/* {{ ulauncher_theme.target_dir }}/
+      mv /tmp/ulauncher_theme_extract_{{ user }}/{{ ulauncher_theme.repo_name }}-{{ ulauncher_theme.branch }}/* {{ ulauncher_theme.target_dir }}/
   args:
     creates: "{{ ulauncher_theme.target_dir }}/theme.css"
     executable: /bin/bash

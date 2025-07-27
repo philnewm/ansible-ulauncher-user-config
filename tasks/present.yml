@@ -8,6 +8,23 @@
   ansible.builtin.debug:
     msg: "Unable to find ulauncher in installed packages"
 
+- name: Check if lingering is already enabled
+  become: true
+  become_user: "{{ user }}"
+  ansible.builtin.command:
+    cmd: "loginctl show-user {{ user }} --property=Linger"
+  register: linger_status
+  changed_when: false
+
+- name: Enable lingering if not already enabled
+  when: "'Linger=no' in linger_status.stdout"
+  become: true
+  become_user: "{{ user }}"
+  ansible.builtin.command:
+    cmd: "loginctl enable-linger {{ user }}"
+  register: linger_active
+  changed_when: linger_active.rc == 0
+
 - name: Ensure ulauncher service is enabled
   become: true
   become_user: "{{ user }}"
