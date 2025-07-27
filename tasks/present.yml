@@ -9,6 +9,8 @@
     msg: "Unable to find ulauncher in installed packages"
 
 - name: Ensure ulauncher service is enabled
+  become: true
+  become_user: "{{ user }}"
   ansible.builtin.systemd_service:
     name: ulauncher.service
     enabled: true
