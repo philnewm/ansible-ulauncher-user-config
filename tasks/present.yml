@@ -3,6 +3,13 @@
 - name: Gather package facts
   ansible.builtin.package_facts:
 
+- name: Install unzip for ubuntu
+  become: true
+  when: ansible_distribution == "Ubuntu"
+  ansible.builtin.package:
+    name: unzip
+    state: present
+
 - name: Check for ulauncher
   when: "'ulauncher' not in ansible_facts.packages"
   ansible.builtin.debug:
