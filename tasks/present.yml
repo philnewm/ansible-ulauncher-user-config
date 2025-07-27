@@ -15,9 +15,11 @@
     cmd: "loginctl show-user {{ user }} --property=Linger"
   register: linger_status
   changed_when: false
+  failed_when: linger_status.rc not in [0, 1]
 
+# Warning the rc based check is rather a guess - but worked
 - name: Enable lingering if not already enabled
-  when: "'Linger=no' in linger_status.stdout"
+  when: linger_status.rc != 0
   become: true
   become_user: "{{ user }}"
   ansible.builtin.command:
