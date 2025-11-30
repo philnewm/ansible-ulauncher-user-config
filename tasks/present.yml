@@ -58,7 +58,7 @@
 
 - name: Get current display server
   ansible.builtin.command:
-    cmd: "grep '^WaylandEnable=true' /etc/gdm/custom.conf"
+    cmd: "grep '^#WaylandEnable=false' /etc/gdm/custom.conf"
   register: wayland_check
   changed_when: false
   failed_when: false

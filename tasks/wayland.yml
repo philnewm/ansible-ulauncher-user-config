@@ -27,10 +27,6 @@
     state: read
   register: custom_shortcuts_result
 
-- name: Display shortcuts
-  ansible.builtin.debug:
-    var: custom_shortcuts_result
-
 - name: Set shortcut list
   ansible.builtin.set_fact:
     existing_custom_shortcuts: "{{ custom_shortcuts_result.value | replace(\"'\", '\"') | from_json if custom_shortcuts_result.value else [] }}"
@@ -49,10 +45,6 @@
         key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings"
         value: "[{{ updated_custom_shortcuts | map('tojson') | join(', ') }}]"
         state: present
-
-    - name: Display list
-      ansible.builtin.debug:
-        var: custom_shortcuts
 
 - name: Set name for the ulauncher keybinding
   become: true
