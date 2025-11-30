@@ -72,17 +72,10 @@
     value: "{{ '@as []' | string }}"
     state: present
 
-- name: "Wayland adjustments for {{ user }}"
-  become: true
-  become_user: "{{ user }}"
-  when: wayland_check.rc == 0
-  ansible.builtin.set_fact:
-    ulauncher_settings: >-
-      {{
-        ulauncher_settings | combine({
-          "hotkey-show-app": "<Alt>minus"
-        })
-      }}
+- name: "Include wayland adjustments for {{ user }}"
+  when: wayland_check.rc == 0 and 'gnome-shell' in ansible_facts.packages
+  ansible.builtin.include_tasks:
+    file: wayland.yml
 
 - name: "Write app settings for {{ user }}"
   become: true

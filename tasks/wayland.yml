@@ -1,0 +1,90 @@
+---
+
+# https://github.com/Ulauncher/Ulauncher/wiki/Hotkey-In-Wayland
+- name: Install wayland dependency
+  become: true
+  when: "'wmctrl' not in ansible_facts.packages"
+  ansible.builtin.package:
+    name: wmctrl
+    state: present
+
+- name: "Wayland adjustments for {{ user }}"
+  become: true
+  become_user: "{{ user }}"
+  ansible.builtin.set_fact:
+    ulauncher_settings: >-
+      {{
+        ulauncher_settings | combine({
+          "hotkey-show-app": "<Alt>minus"
+        })
+      }}
+
+- name: Read gnome custom shortcuts
+  become: true
+  become_user: "{{ user }}"
+  community.general.dconf:
+    key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings"
+    state: read
+  register: custom_shortcuts_result
+
+- name: Display shortcuts
+  ansible.builtin.debug:
+    var: custom_shortcuts_result
+
+- name: Set shortcut list
+  ansible.builtin.set_fact:
+    existing_custom_shortcuts: "{{ custom_shortcuts_result.value | replace(\"'\", '\"') | from_json if custom_shortcuts_result.value else [] }}"
+
+- name: Check if shortcut exists
+  when: not ulauncher_shortcut_path + '/' in existing_custom_shortcuts
+  block:
+    - name: Set shortcut list
+      ansible.builtin.set_fact:
+        updated_custom_shortcuts: "{{ existing_custom_shortcuts + [ulauncher_shortcut_path + '/'] }}"
+
+    - name: Write gnome custom shortcuts
+      become: true
+      become_user: "{{ user }}"
+      community.general.dconf:
+        key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings"
+        value: "[{{ updated_custom_shortcuts | map('tojson') | join(', ') }}]"
+        state: present
+
+    - name: Display list
+      ansible.builtin.debug:
+        var: custom_shortcuts
+
+- name: Set name for the ulauncher keybinding
+  become: true
+  become_user: "{{ user }}"
+  community.general.dconf:
+    key: "{{ ulauncher_shortcut_path }}/name"
+    value: "'Ulauncher'"
+    state: present
+
+- name: Set command for the ulauncher keybinding
+  become: true
+  become_user: "{{ user }}"
+  community.general.dconf:
+    key: "{{ ulauncher_shortcut_path }}/command"
+    value: "'ulauncher-toggle'"
+    state: present
+
+- name: Set binding for the custom keybinding
+  become: true
+  become_user: "{{ user }}"
+  community.general.dconf:
+    key: "{{ ulauncher_shortcut_path }}/binding"
+    value: "'<Alt>space'"
+    state: present
+
+- name: Get gnome custom shortcuts
+  become: true
+  become_user: "{{ user }}"
+  when: "'gnome-shell' in ansible_facts.packages"
+  community.general.dconf:
+    key: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings"
+    state: read
+  register: custom_shortcuts_result
+
+...

@@ -5,6 +5,7 @@ user: "vagrant"
 
 ulauncher_settings_dir: "/home/{{ user }}/.config/ulauncher"
 ulauncher_themes_dir: "{{ ulauncher_settings_dir }}/user-themes"
+ulauncher_shortcut_path: "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/ulauncher"
 
 ulauncher_settings:
   "blacklisted-desktop-dirs": "/usr/share/locale:/usr/share/app-install:/usr/share/kservices5:/usr/share/fk5:/usr/share/kservicetypes5:/usr/share/applications/screensavers:/usr/share/kde4:/usr/share/mimelnk"

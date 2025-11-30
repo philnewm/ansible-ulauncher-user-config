@@ -17,6 +17,25 @@
     fail_msg: "ulauncher.service is not enabled (status: {{ ulauncher_enabled_status.stdout }})"
     quiet: true
 
+- name: Get current display server
+  ansible.builtin.command:
+    cmd: "grep '^WaylandEnable=true' /etc/gdm/custom.conf"
+  register: wayland_check
+  changed_when: false
+  failed_when: false
+
+- name: "Wayland adjustments for {{ user }}"
+  become: true
+  become_user: "{{ user }}"
+  when: wayland_check.rc == 0 and 'gnome-shell' in ansible_facts.packages
+  ansible.builtin.set_fact:
+    ulauncher_settings: >-
+      {{
+        ulauncher_settings | combine({
+          "hotkey-show-app": "<Alt>minus"
+        })
+      }}
+
 - name: Load the JSON file into a variable
   become: true
   become_user: "{{ user }}"
