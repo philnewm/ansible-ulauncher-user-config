@@ -1,6 +1,6 @@
 ---
 
-name: Rocky9
+name: Ubuntu2404
 
 on:
   push:
@@ -22,9 +22,9 @@ permissions:
   contents: read
 
 jobs:
-  ci:
+  ubuntu2204-ci:
     uses: philnewm/ansible-role-repo-control/.github/workflows/molecule-ci-podman.yml@main
     with:
-      scenario_name: rocky9
+      scenario_name: ubuntu2404
 
 ...

@@ -1,10 +1,14 @@
 # Ulauncher-user-config-Role
 
-[![Alma9-CI](https://github.com/philnewm/ansible-ulauncher-user-config/actions/workflows/alma9-ci-caller.yml/badge.svg)](https://github.com/philnewm/ansible-ulauncher-user-config/actions/workflows/alma9-ci-caller.yml)  [![Rocky9-CI](https://github.com/philnewm/ansible-ulauncher-user-config/actions/workflows/rocky9-ci-caller.yml/badge.svg)](https://github.com/philnewm/ansible-ulauncher-user-config/actions/workflows/rocky9-ci-caller.yml)  [![CentOSStream9-CI](https://github.com/philnewm/ansible-ulauncher-user-config/actions/workflows/centosstream9-ci-caller.yml/badge.svg)](https://github.com/philnewm/ansible-ulauncher-user-config/actions/workflows/centosstream9-ci-caller.yml)  [![Debian12-CI](https://github.com/philnewm/ansible-ulauncher-user-config/actions/workflows/debian12-ci-caller.yml/badge.svg)](https://github.com/philnewm/ansible-ulauncher-user-config/actions/workflows/debian12-ci-caller.yml)  [![Ubuntu2204-CI](https://github.com/philnewm/ansible-ulauncher-user-config/actions/workflows/ubuntu2204-ci-caller.yml/badge.svg)](https://github.com/philnewm/ansible-ulauncher-user-config/actions/workflows/ubuntu2204-ci-caller.yml)
+[![Alma9-CI](https://github.com/philnewm/ansible-ulauncher-user-config/actions/workflows/alma9-ci-caller.yml/badge.svg)](https://github.com/philnewm/ansible-ulauncher-user-config/actions/workflows/alma9-ci-caller.yml) [![Rocky9-CI](https://github.com/philnewm/ansible-ulauncher-user-config/actions/workflows/rocky9-ci-caller.yml/badge.svg)](https://github.com/philnewm/ansible-ulauncher-user-config/actions/workflows/rocky9-ci-caller.yml) [![CentOSStream9-CI](https://github.com/philnewm/ansible-ulauncher-user-config/actions/workflows/centosstream9-ci-caller.yml/badge.svg)](https://github.com/philnewm/ansible-ulauncher-user-config/actions/workflows/centosstream9-ci-caller.yml) [![Fedora43-CI](https://github.com/philnewm/ansible-ulauncher-user-config/actions/workflows/fedora43-ci-caller.yml/badge.svg)](https://github.com/philnewm/ansible-ulauncher-user-config/actions/workflows/fedora43-ci-caller.yml)<br>
+[![Ubuntu2404-CI](https://github.com/philnewm/ansible-ulauncher-user-config/actions/workflows/ubuntu2404-ci-caller.yml/badge.svg)](https://github.com/philnewm/ansible-ulauncher-user-config/actions/workflows/ubuntu2404-ci-caller.yml) [![Debian13-CI](https://github.com/philnewm/ansible-ulauncher-user-config/actions/workflows/debian13-ci-caller.yml/badge.svg)](https://github.com/philnewm/ansible-ulauncher-user-config/actions/workflows/debian13-ci-caller.yml)
 
 Role description
 
-This role includes a vagrant based molecule testing setup as a submodule at `molecule/`
+This role applies a bunch of custom settings as well as a [forked theme](https://github.com/philnewm/ulauncher_theme).<br>
+It will also work for XOrg and Wayland since this requires a few [adjustments](https://github.com/Ulauncher/Ulauncher/wiki/Hotkey-In-Wayland) when it comes to the configured hotkey.
+
+This role includes a molecule testing setup as a submodule at `molecule/`
 
 ## Structure
 
@@ -17,13 +21,13 @@ This role includes a vagrant based molecule testing setup as a submodule at `mol
  ┣ 📂 molecule
  ┃ ┗ 📂 default
  ┃   ┗ 📜, 📜, 📜, scenario_files
- ┣ 📂 tasks
- ┃ ┣ 📜 absent.yml
- ┃ ┣ 📜 main.yml
- ┃ ┣ 📜 present.yml
- ┃ ┗ 📜 tests.yml
- ┣ 📂 vars
- ┃ ┗ 📜 main.yml
+ ┣ 📂tasks
+ ┃ ┣ 📜absent.yml
+ ┃ ┣ 📜main.yml
+ ┃ ┣ 📜present.yml
+ ┃ ┣ 📜tests.yml
+ ┃ ┣ 📜themes.yml
+ ┃ ┗ 📜wayland.yml
  ┗ 🗒️ README.md
 
 ```
