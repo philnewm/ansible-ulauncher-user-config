@@ -1,7 +1,7 @@
 ---
 
 state: present
-user: "vagrant"
+user: "ansible"
 
 ulauncher_settings_dir: "/home/{{ user }}/.config/ulauncher"
 ulauncher_themes_dir: "{{ ulauncher_settings_dir }}/user-themes"

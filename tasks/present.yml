@@ -3,9 +3,8 @@
 - name: Gather package facts
   ansible.builtin.package_facts:
 
-- name: Install unzip for ubuntu
+- name: Ensure unzip is available
   become: true
-  when: ansible_distribution == "Ubuntu"
   ansible.builtin.package:
     name: unzip
     state: present
@@ -15,25 +14,25 @@
   ansible.builtin.debug:
     msg: "Unable to find ulauncher in installed packages"
 
-- name: Check if lingering is already enabled
+- name: Install dbus user session support on Debian/Ubuntu
   become: true
-  ansible.builtin.command:
-    cmd: "loginctl show-user {{ user }} --property=Linger"
-  register: linger_status
-  changed_when: false
-  failed_when: linger_status.rc not in [0, 1]
+  when: ansible_facts.os_family == "Debian"
+  ansible.builtin.apt:
+    name: dbus-user-session
+    state: present
 
-# Warning the rc based check is rather a guess - but worked
-- name: Enable lingering if not already enabled
-  when: linger_status.rc != 0
+# Warning rather a side-effect then intentional user session
+- name: Check systemd user status for ansible user # noqa: command-instead-of-module
   become: true
+  become_user: "{{ user }}"
   ansible.builtin.command:
-    cmd: "loginctl enable-linger {{ user }}"
-  register: linger_active
-  changed_when: linger_active.rc == 0
+    cmd: "systemctl --user status"
+  changed_when: false
+  failed_when: false
 
 - name: Ensure ulauncher service is enabled
   become: true
+  become_flags: "-i"
   become_user: "{{ user }}"
   ansible.builtin.systemd_service:
     name: ulauncher.service

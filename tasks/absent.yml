@@ -6,9 +6,4 @@
 
 # TODO remove custom gnome shortcut in case of wayland
 
-- name: Remove unused dependencies
-  become: true
-  ansible.builtin.package:
-    autoremove: true
-
 ...
