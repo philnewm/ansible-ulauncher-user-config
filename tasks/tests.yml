@@ -1,20 +1,18 @@
 ---
 
-- name: Check for enabled ulauncher service  # noqa: command-instead-of-module
+- name: Get service symlink
   become: true
-  become_flags: "-i"
-  become_user: "{{ user }}"
-  ansible.builtin.command:
-    cmd: systemctl --user is-enabled ulauncher.service
-  register: ulauncher_enabled_status
-  changed_when: false
-  failed_when: false
+  ansible.builtin.stat:
+    path: "/home/{{ user }}/.config/systemd/user/graphical-session.target.wants/ulauncher.service"
+  register: service_symlink_result
 
-- name: Test running ulauncher service
+- name: Test service symlink
   ansible.builtin.assert:
     that:
-      - ulauncher_enabled_status.stdout == "enabled"
-    fail_msg: "ulauncher.service is not enabled (status: {{ ulauncher_enabled_status.stdout }})"
+      - service_symlink_result.stat.exists
+      - service_symlink_result.stat.islnk
+      - service_symlink_result.stat.lnk_target == "/usr/lib/systemd/user/ulauncher.service"
+    fail_msg: "ulauncher symlink not set up as expected: {{ service_symlink_result.stat.path }}"
     quiet: true
 
 - name: Get current display server
