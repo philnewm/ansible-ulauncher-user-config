@@ -2,28 +2,31 @@
 
 - name: Ensure theme dir exists
   become: true
-  become_user: "{{ user }}"
   ansible.builtin.file:
     path: "{{ ulauncher_theme.target_dir }}"
     state: "directory"
     mode: "0755"
+    owner: "{{ user }}"
+    group: "{{ user }}"
 
 - name: Ensure temp theme dir exists
   become: true
-  become_user: "{{ user }}"
   ansible.builtin.file:
     path: "/tmp/ulauncher_theme_extract_{{ user }}"
     state: directory
     mode: "0755"
+    owner: "{{ user }}"
+    group: "{{ user }}"
 
 # INFO workaround to prevent another sub-dir with the archives name
 - name: "Download theme {{ ulauncher_theme.name }}"
   become: true
-  become_user: "{{ user }}"
   ansible.builtin.unarchive:
     src: "{{ ulauncher_theme.repo_url }}"
     dest: "/tmp/ulauncher_theme_extract_{{ user }}"
     remote_src: true
+    owner: "{{ user }}"
+    group: "{{ user }}"
   args:
     creates: "{{ ulauncher_theme.target_dir }}/theme.css"
 

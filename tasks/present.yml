@@ -26,6 +26,7 @@
     path: "/home/{{ user }}/.config/systemd/user/graphical-session.target.wants"
     state: directory
     owner: "{{ user }}"
+    group: "{{ user }}"
     mode: "0755"
 
 - name: Enable ulauncher service via symlink
@@ -35,6 +36,7 @@
     dest: "/home/{{ user }}/.config/systemd/user/graphical-session.target.wants/ulauncher.service"
     state: link
     owner: "{{ user }}"
+    group: "{{ user }}"
 
 - name: Ansible check directory
   become: true
@@ -75,27 +77,30 @@
 
 - name: "Write app settings for {{ user }}"
   become: true
-  become_user: "{{ user }}"
   ansible.builtin.copy:
     dest: "{{ (ulauncher_settings_dir, 'settings.json') | ansible.builtin.path_join }}"
     content: "{{ ulauncher_settings | to_json(indent=4) }}"
     mode: "0644"
+    owner: "{{ user }}"
+    group: "{{ user }}"
 
 - name: "Write extension settings for {{ user }}"
   become: true
-  become_user: "{{ user }}"
   ansible.builtin.copy:
     dest: "{{ (ulauncher_settings_dir, 'extensions.json') | ansible.builtin.path_join }}"
     content: "{{ ulauncher_extensions | to_json(indent=4) }}"
     mode: "0644"
+    owner: "{{ user }}"
+    group: "{{ user }}"
 
 - name: "Write shortcut settings for {{ user }}"
   become: true
-  become_user: "{{ user }}"
   ansible.builtin.copy:
     dest: "{{ (ulauncher_settings_dir, 'shortcuts.json') | ansible.builtin.path_join }}"
     content: "{}"
     mode: "0644"
+    owner: "{{ user }}"
+    group: "{{ user }}"
 
 - name: Set up themes
   loop: "{{ ulauncher_github_repo_theme }}"
