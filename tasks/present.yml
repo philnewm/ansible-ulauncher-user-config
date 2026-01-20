@@ -14,13 +14,6 @@
   ansible.builtin.debug:
     msg: "Unable to find ulauncher in installed packages"
 
-- name: Install dbus user session support on Debian/Ubuntu
-  become: true
-  when: ansible_facts.os_family == "Debian"
-  ansible.builtin.apt:
-    name: dbus-user-session
-    state: present
-
 - name: Ensure ulauncher user service directory exists
   ansible.builtin.file:
     path: "/home/{{ user }}/.config/systemd/user/graphical-session.target.wants"
@@ -61,19 +54,16 @@
   changed_when: false
   failed_when: false
 
-- name: Disable Alt+Space for 'Activate the Window menu'
-  become: true
-  become_user: "{{ user }}"
-  when: "'gnome-shell' in ansible_facts.packages"
-  community.general.dconf:
-    key: "/org/gnome/desktop/wm/keybindings/activate-window-menu"
-    value: "{{ '@as []' | string }}"
-    state: present
-
-- name: "Include wayland adjustments for {{ user }}"
+# https://github.com/Ulauncher/Ulauncher/wiki/Hotkey-In-Wayland
+- name: "Wayland adjustments for {{ user }}"
   when: wayland_check.rc == 0 and 'gnome-shell' in ansible_facts.packages
-  ansible.builtin.include_tasks:
-    file: wayland.yml
+  ansible.builtin.set_fact:
+    ulauncher_settings: >-
+      {{
+        ulauncher_settings | combine({
+          "hotkey-show-app": "<Alt>minus"
+        })
+      }}
 
 - name: "Write app settings for {{ user }}"
   become: true

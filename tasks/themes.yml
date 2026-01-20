@@ -18,7 +18,7 @@
     owner: "{{ user }}"
     group: "{{ user }}"
 
-# INFO workaround to prevent another sub-dir with the archives name
+# Note workaround to prevent another sub-dir with the archives name
 - name: "Download theme {{ ulauncher_theme.name }}"
   become: true
   ansible.builtin.unarchive:
