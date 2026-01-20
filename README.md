@@ -26,9 +26,9 @@ This role includes a molecule testing setup as a submodule at `molecule/`
  ┃ ┣ 📜main.yml
  ┃ ┣ 📜present.yml
  ┃ ┣ 📜tests.yml
- ┃ ┣ 📜themes.yml
- ┃ ┗ 📜wayland.yml
+ ┃ ┗ 📜themes.yml
  ┗ 🗒️ README.md
+ ┗ 📜 requirements.yml
 
 ```
 
